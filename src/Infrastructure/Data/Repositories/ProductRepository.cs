@@ -29,20 +29,31 @@ public class ProductRepository(StoreContext storeContext) : IProductRepository
     }
 
     public async Task<IReadOnlyList<Product>> GetProductsAsync(string? brand,string? type,
-    CancellationToken cancellationToken)
+    string? sort, CancellationToken cancellationToken)
     {
-        var products = storeContext.Products.AsQueryable();
+        var query = storeContext.Products.AsQueryable();
+
         if (!string.IsNullOrWhiteSpace(brand))
         {
-            products = products.Where(p => p.Brand == brand);
+            query = query.Where(p => p.Brand == brand);
         }
 
         if (!string.IsNullOrWhiteSpace(type))
         {
-            products = products.Where(p => p.Type == type);
+            query = query.Where(p => p.Type == type);
         }
 
-        return await products.ToListAsync(cancellationToken);
+        if (!string.IsNullOrWhiteSpace(sort))
+        {
+            query = sort switch
+            {
+                "priceAsc" => query.OrderBy(p => p.Price),
+                "priceDesc" => query.OrderByDescending(p => p.Price),
+                _ => query.OrderBy(p => p.Name)
+            };
+        }
+
+        return await query.ToListAsync(cancellationToken);
     }
 
     public bool ProductExists(int id)

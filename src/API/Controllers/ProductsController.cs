@@ -11,9 +11,9 @@ public class ProductsController(IProductRepository productRepository) : Controll
 {
     [HttpGet]
     public async Task<IActionResult> GetProductsAsync(string? brand,string? type,
-     CancellationToken cancellationToken)
+     string? sort, CancellationToken cancellationToken)
     {
-        var products = await productRepository.GetProductsAsync(brand,type,cancellationToken);
+        var products = await productRepository.GetProductsAsync(brand, type, sort, cancellationToken);
         return Ok(products);
     }
 

@@ -5,7 +5,7 @@ namespace Core.Intarfaces;
 public interface IProductRepository
 {
    Task<IReadOnlyList<Product>> GetProductsAsync(string? brand,
-   string? type,CancellationToken cancellationToken);
+   string? type,string? sort,CancellationToken cancellationToken);
    Task<Product?> GetProductByIdAsync(int id, CancellationToken cancellationToken);
    Task<IReadOnlyList<string>> GetBrandsAsync(CancellationToken cancellationToken);
    Task<IReadOnlyList<string>> GetTypesAsync(CancellationToken cancellationToken);
