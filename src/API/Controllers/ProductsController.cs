@@ -1,22 +1,23 @@
+using API.RequestHelpers;
 using Core.Entities;
 using Core.Intarfaces;
 using Core.Specifications;
-using infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ProductsController(IGenericRepository<Product> repository) : ControllerBase
+public class ProductsController(IGenericRepository<Product> repository) : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetProductsAsync(string? brand,string? type,
-     string? sort, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetProductsAsync([FromQuery] ProductSpecPramas specPramas, 
+    CancellationToken cancellationToken)
     {
-        var spec = new ProductSpecification(brand, type, sort);
-        var products = await repository.ListSpecificationAsync(spec, cancellationToken);
-        return Ok(products);
+        var spec = new ProductSpecification(specPramas);
+        return await CreatePagedResponseAsync(
+            repository,
+            spec, 
+            specPramas.PageIndex,
+            specPramas.PageSize,
+            cancellationToken);
     }
 
    [HttpGet("{id:int}")]

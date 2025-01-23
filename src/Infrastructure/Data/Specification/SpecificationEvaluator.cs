@@ -11,6 +11,7 @@ public class SpecificationEvaluator<T> where T : BaseEntity
      query = spec.OrderBy is not null ? query.OrderBy(spec.OrderBy) : query;
      query = spec.OrderByDescending is not null ? query.OrderByDescending(spec.OrderByDescending) : query;
      query = spec.IsDistinct is true ? query.Distinct() : query;
+     query = spec.IsPagingEnabled is true ? query.Skip(spec.Skip).Take(spec.Take) : query;
 
         return query;
     }
@@ -33,6 +34,7 @@ public class SpecificationEvaluator<T> where T : BaseEntity
          }
 
          selectQuery = spec.IsDistinct is true ? selectQuery?.Distinct() : selectQuery;
+          selectQuery = spec.IsPagingEnabled is true ? selectQuery?.Skip(spec.Skip).Take(spec.Take) : selectQuery;
 
         return selectQuery ?? query.Cast<TResult>();
     }
