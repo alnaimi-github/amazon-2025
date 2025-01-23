@@ -6,4 +6,9 @@ global using infrastructure.Data.SeedData;
 global using Core.Entities;
 global using Core.Intarfaces;
 global using API.RequestHelpers;
+global using System.Net;
+global using System.Text.Json;
+global using API.Errors;
+global using API.Middleware;
+global using System.ComponentModel.DataAnnotations;
 
