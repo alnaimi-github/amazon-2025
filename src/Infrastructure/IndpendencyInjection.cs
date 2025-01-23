@@ -8,6 +8,7 @@ public static class IndpendencyInjection
         AddDatabase(services, configuration);
         
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
         return services;
     }
