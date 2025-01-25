@@ -10,7 +10,8 @@ builder.Services.AddCors();
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5200", "https://localhost:3000"));
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+.WithOrigins("http://localhost:4200", "https://localhost:4200"));
 
 app.MapControllers();
 
