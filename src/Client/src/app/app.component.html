@@ -2,15 +2,6 @@
 <app-header></app-header>
 
 
-
-    <div class="container mt-6">
-        <h2 class="text-3xl font-bold underline text-center">Welcome to {{title}}</h2>
-    
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-            <div *ngFor="let product of products" class="bg-white p-4 shadow-md">
-                <h3 class="text-xl font-bold">{{ product.name }}</h3>
-                <p class="text-gray-500">{{ product.description }}</p>
-                <button class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Buy Now</button>
-            </div>
-        </div>
-    </div>
+<div class="container mt-6">
+    <app-shop></app-shop>
+ </div>
