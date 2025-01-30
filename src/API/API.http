@@ -1,6 +1,16 @@
-@API_HostAddress = http://localhost:5051
+@API_HostAddress = https://localhost:5000
 
-GET {{API_HostAddress}}/weatherforecast/
-Accept: application/json
+
+GET {{API_HostAddress}}/api/buggy/notfound
+###
+
+GET {{API_HostAddress}}/api/buggy/servererror
+###
+
+GET {{API_HostAddress}}/api/buggy/unauthorized
+
+###
+
+GET {{API_HostAddress}}/api/buggy/badrequest
 
 ###
