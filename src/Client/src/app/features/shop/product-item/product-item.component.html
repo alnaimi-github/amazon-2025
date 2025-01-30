@@ -1,7 +1,11 @@
 
 
 @if (product) {
-    <mat-card appearance="raised" ngForTrackBy="product.id" class="bg-white p-4 shadow-md">
+    <mat-card
+    appearance="raised"
+    ngForTrackBy="product.id"
+     class="bg-white p-4 shadow-md product-card"
+     routerLink="/shop/{{product.id}}">
         <img [src]="product.pictureUrl" alt="{{product.name}}">
 
         <mat-card-content class="mt-2">
@@ -17,4 +21,7 @@
         </mat-card-actions>
 
       </mat-card>
+}
+@else {
+
 }
