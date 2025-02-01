@@ -3,15 +3,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddInfrastructure(builder.Configuration);
+var configuration = builder.Configuration;
+
+builder.Services.AddInfrastructure(configuration);
 builder.Services.AddCors();
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(con =>
+{
+    var connectionString = configuration.GetConnectionString("Redis")
+                         ?? throw new InvalidOperationException("Cannot get Redis connection string!");
+    var config = ConfigurationOptions.Parse(connectionString, true);
+    return ConnectionMultiplexer.Connect(config);
+});
 
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
-.WithOrigins("http://localhost:4200", "https://localhost:4200"));
+.WithOrigins("https://localhost:4200"));
 
 app.MapControllers();
 
@@ -26,5 +35,4 @@ catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
 }
-
-app.Run();
+await app.RunAsync();

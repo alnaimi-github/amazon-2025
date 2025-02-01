@@ -11,4 +11,4 @@ global using System.Text.Json;
 global using API.Errors;
 global using API.Middleware;
 global using System.ComponentModel.DataAnnotations;
-
+global using StackExchange.Redis;
