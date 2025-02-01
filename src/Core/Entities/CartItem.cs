@@ -8,5 +8,5 @@ public sealed class CartItem
     public int Quantity { get; set; }
     public string PictureUrl { get; set; } = default!;
     public string Brand { get; set; } = default!;
-    public string Types { get; set; } = default!;
+    public string Type { get; set; } = default!;
 }

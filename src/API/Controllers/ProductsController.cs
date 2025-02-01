@@ -1,8 +1,3 @@
-using API.RequestHelpers;
-using Core.Entities;
-using Core.Intarfaces;
-using Core.Specifications;
-
 namespace API.Controllers;
 
 public class ProductsController(IGenericRepository<Product> repository) : BaseApiController

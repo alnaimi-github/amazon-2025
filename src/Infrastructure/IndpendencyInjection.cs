@@ -6,15 +6,14 @@ public static class IndpendencyInjection
      IConfiguration configuration)
     {
         AddDatabase(services, configuration);
-        
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddSingleton<ICartService, CartService>();
 
         return services;
     }
 
-    private static void AddDatabase(IServiceCollection services, 
-    IConfiguration configuration)
+    private static void AddDatabase(IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<StoreContext>(options =>

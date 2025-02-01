@@ -5,3 +5,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Core.Entities;
 global using Core.Intarfaces;
 global using infrastructure.Data.Repositories;
+global using System.Text.Json;
+global using StackExchange.Redis;
+global using Infrastructure.Services;
