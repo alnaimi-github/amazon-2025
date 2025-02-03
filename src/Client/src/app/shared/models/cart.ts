@@ -1,8 +1,8 @@
-
+import {nanoid} from 'nanoid'
 export interface CartType
 {
   id: string;
-  cartItems: CartItem[];
+  items: CartItem[];
 }
 
 export interface CartItem{
@@ -12,13 +12,11 @@ export interface CartItem{
   pictureUrl: string;
   brand: string;
   type: string;
-  productType: string;
   productId: number;
-  productBrandId: number;
 }
 
 export class Cart implements CartType
 {
-  id = '';
+  id = nanoid();
   items: CartItem[] = [];
 }
