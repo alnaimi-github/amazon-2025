@@ -1,6 +1,5 @@
 import { Component} from '@angular/core';
 import { HeaderComponent } from "./layout/header/header/header.component";
-import { ShopComponent } from "./features/shop/shop.component";
 import { RouterOutlet } from '@angular/router';
 
 
@@ -8,8 +7,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   imports: [
     HeaderComponent,
-    RouterOutlet,
-    ShopComponent
+    RouterOutlet
 ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
