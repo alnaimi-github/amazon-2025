@@ -11,7 +11,7 @@
         {{ item().productName }}
       </a>
       <div class="flex items-center gap-4">
-        <button mat-button style="color: red;">
+        <button mat-button style="color: red;" (click)="removeItemFromCart()">
           <mat-icon>delete</mat-icon>
           Delete
         </button>
@@ -21,11 +21,11 @@
     <!-- Quantity and Price -->
     <div class="flex items-center gap-6">
       <div class="flex items-center gap-3">
-        <button mat-icon-button>
+        <button mat-icon-button (click)="decrementQuantity()">
           <mat-icon class="text-red-600" style="color:red;">remove</mat-icon>
         </button>
         <div class="font-semibold text-xl">{{ item().quantity }}</div>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="incrementQuantity()">
           <mat-icon class="text-green-600" style="color:green">add</mat-icon>
         </button>
       </div>
