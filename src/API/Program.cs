@@ -16,6 +16,10 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(con =>
     return ConnectionMultiplexer.Connect(config);
 });
 
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<AppUser>()
+  .AddEntityFrameworkStores<StoreContext>();
+
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -23,6 +27,7 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
 .WithOrigins("https://localhost:4200"));
 
 app.MapControllers();
+app.MapIdentityApi<AppUser>();
 
 try
 {
