@@ -23,11 +23,11 @@ builder.Services.AddIdentityApiEndpoints<AppUser>()
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 .WithOrigins("https://localhost:4200"));
 
 app.MapControllers();
-app.MapIdentityApi<AppUser>();
+app.MapGroup("api").MapIdentityApi<AppUser>();
 
 try
 {
