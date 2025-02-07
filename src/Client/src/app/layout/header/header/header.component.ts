@@ -1,12 +1,14 @@
-import { BusyService } from './../../../core/services/busy.service';
-import { Component, inject } from '@angular/core';
-import {  MatBadge } from '@angular/material/badge';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatButton } from '@angular/material/button';
+import { MatBadge } from '@angular/material/badge';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { CartService } from '../../../core/services/cart.service';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatDivider } from '@angular/material/divider';
+import { Component, inject } from '@angular/core';
+import { BusyService } from '../../../core/services/busy.service';
 import { AccountService } from '../../../core/services/account.service';
+import { CartService } from '../../../core/services/cart.service';
 
 
 @Component({
@@ -17,8 +19,11 @@ import { AccountService } from '../../../core/services/account.service';
     MatBadge,
     RouterLink,
     RouterLinkActive,
-    MatProgressBar
-
+    MatProgressBar,
+    MatMenuTrigger,
+    MatMenu,
+    MatDivider,
+    MatMenuItem
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
