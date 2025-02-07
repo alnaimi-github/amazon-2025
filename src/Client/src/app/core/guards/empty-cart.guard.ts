@@ -9,7 +9,7 @@ export const emptyCartGuard: CanActivateFn = (route, state) => {
   const snack = inject(SnackbarService);
 
   if(!cartService.cart() || cartService.cart()?.items.length === 0) {
-    snack.error('Your cart is empty');
+    snack.error('Your cart is empty'); 
     router.navigateByUrl('/cart');
     return false;
   }
