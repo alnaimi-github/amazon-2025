@@ -6,11 +6,12 @@ public class StoreContext(DbContextOptions options) : IdentityDbContext<AppUser>
 {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Address> Addresss => Set<Address>();
+    public DbSet<DeliveryMethod> DeliveryMethods => Set<DeliveryMethod>();
 
-      protected override void ConfigureConventions(
+    protected override void ConfigureConventions(
     ModelConfigurationBuilder configurationBuilder)
   {
-    configurationBuilder.Properties<decimal>()
-      .HavePrecision(18, 6);
+          configurationBuilder.Properties<decimal>()
+                              .HavePrecision(18, 6);
   }
 }

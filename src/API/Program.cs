@@ -1,4 +1,6 @@
 
+using Infrastructure.Data.SeedData;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -33,8 +35,9 @@ try
 {
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     await context.Database.MigrateAsync();
-    await StoreContextSeeder.SeedAsync(context);
+    await StoreContextSeeder.SeedAsync(context, logger);
 }
 catch (Exception ex)
 {

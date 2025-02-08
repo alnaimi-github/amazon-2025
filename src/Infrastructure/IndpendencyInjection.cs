@@ -9,6 +9,7 @@ public static class IndpendencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddSingleton<ICartService, CartService>();
+        services.AddScoped<IPaymentService, PaymentService>();
 
         return services;
     }
