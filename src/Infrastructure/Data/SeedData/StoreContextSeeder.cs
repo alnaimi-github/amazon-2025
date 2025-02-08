@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace Infrastructure.Data.SeedData;
 
 public static class StoreContextSeeder

@@ -1,6 +1,3 @@
-
-using Infrastructure.Data.Specifications;
-
 namespace infrastructure.Data.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity

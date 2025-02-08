@@ -8,3 +8,6 @@ global using infrastructure.Data.Repositories;
 global using System.Text.Json;
 global using StackExchange.Redis;
 global using Infrastructure.Services;
+global using Microsoft.Extensions.Logging;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Infrastructure.Data.Specifications;

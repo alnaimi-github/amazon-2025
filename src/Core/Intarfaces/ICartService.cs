@@ -1,5 +1,3 @@
-using Core.Entities;
-
 namespace Core.Intarfaces;
 
 public interface ICartService

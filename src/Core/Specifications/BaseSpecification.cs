@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-using Core.Intarfaces;
 namespace Core.Specifications;
 
 public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecification<T>

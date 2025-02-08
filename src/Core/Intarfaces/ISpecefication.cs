@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-
 namespace Core.Intarfaces;
 
 public interface ISpecification<T>

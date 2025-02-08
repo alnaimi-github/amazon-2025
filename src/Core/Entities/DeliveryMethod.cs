@@ -1,6 +1,6 @@
 namespace Core.Entities;
 
-public class DeliveryMethod : BaseEntity
+public sealed class DeliveryMethod : BaseEntity
 {
     public string ShortName { get; set; } = default!;
     public string DeliveryTime { get; set; } = default!;

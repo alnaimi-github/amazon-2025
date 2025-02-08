@@ -1,6 +1,3 @@
-
-using Infrastructure.Data.SeedData;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -31,16 +28,22 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>();
 
-try
-{
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    await context.Database.MigrateAsync();
-    await StoreContextSeeder.SeedAsync(context, logger);
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-}
+await ApplyMigrationsAndSeedDatabaseAsync(app);
+
 await app.RunAsync();
+
+static async Task ApplyMigrationsAndSeedDatabaseAsync(IHost app)
+{
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        await context.Database.MigrateAsync();
+        await StoreContextSeeder.SeedAsync(context, logger);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+}

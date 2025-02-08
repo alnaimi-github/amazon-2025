@@ -1,6 +1,6 @@
 namespace Core.Entities;
 
-public class Address : BaseEntity
+public sealed class Address : BaseEntity
 {
     public string Line1 { get; set; } = default!;
     public string? Line2 { get; set; }

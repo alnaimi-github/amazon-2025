@@ -12,3 +12,4 @@ global using API.Middleware;
 global using System.ComponentModel.DataAnnotations;
 global using StackExchange.Redis;
 global using Core.Specifications;
+global using Infrastructure.Data.SeedData;
