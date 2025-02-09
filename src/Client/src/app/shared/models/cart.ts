@@ -13,10 +13,16 @@ export interface CartItem{
   brand: string;
   type: string;
   productId: number;
+  deliveryMethodId?: number;
+  paymentIntentId?: string;
+  clientSecret?: string;
 }
 
 export class Cart implements CartType
 {
   id = nanoid();
   items: CartItem[] = [];
+  deliveryMethodId?: number;
+  paymentIntentId?: string;
+  clientSecret?: string;
 }
