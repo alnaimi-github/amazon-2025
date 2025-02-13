@@ -1,5 +1,6 @@
+import { AccountService } from './account.service';
 import { inject, Injectable } from '@angular/core';
-import { loadStripe, Stripe, StripeElement, StripeElements } from '@stripe/stripe-js';
+import { loadStripe, Stripe, StripeAddressElement, StripeAddressElementOptions,StripeElements } from '@stripe/stripe-js';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from './cart.service';
@@ -15,6 +16,8 @@ export class StripeService {
  private readonly cartService = inject(CartService);
  private readonly stripePromise?: Promise<Stripe | null>;
  private  elements?: StripeElements;
+ private addressElement?: StripeAddressElement;
+ private readonly accountService = inject(AccountService);
 
   constructor() {
       this.stripePromise = loadStripe(environment.stripePublicKey);
@@ -35,6 +38,40 @@ export class StripeService {
     )
   }
 
+  async createAdressElement() {
+    if(!this.addressElement) {
+      const elements = await this.initializeElements();
+      if(elements) {
+        const user = this.accountService.currentUser();
+        let defaultValues: StripeAddressElementOptions['defaultValues'] = {};
+
+        if(user) {
+          defaultValues.name= user.firstName + ' ' + user.lastName;
+        }
+
+        if(user?.address) {
+          defaultValues.address = {
+            line1: user.address.line1,
+            line2: user.address.line2,
+            country: user.address.country,
+            city: user.address.city,
+            state: user.address.state,
+            postal_code: user.address.postalCode
+          };
+        }
+
+        const options: StripeAddressElementOptions = {
+          mode: 'shipping',
+          defaultValues
+        }
+        this.addressElement = elements.create('address', options);
+      } else {
+        throw new Error('Elements instance has not been loaded');
+      }
+    }
+    return this.addressElement;
+  }
+
   async initializeElements() {
     if(!this.elements) {
        const stripe = await this.getStripeInstance();
@@ -47,5 +84,10 @@ export class StripeService {
        }
     }
     return this.elements;
+  }
+
+  disposeElements() {
+    this.elements = undefined;
+    this.addressElement = undefined;
   }
 }
