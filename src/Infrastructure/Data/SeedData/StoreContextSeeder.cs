@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
 namespace Infrastructure.Data.SeedData
 {
     public static class StoreContextSeeder

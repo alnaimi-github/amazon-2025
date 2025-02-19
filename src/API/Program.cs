@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -14,12 +16,13 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(con =>
     var config = ConfigurationOptions.Parse(connectionString, true);
     return ConnectionMultiplexer.Connect(config);
 });
-
 builder.Services.AddAuthorization();
+
 builder.Services.AddIdentityApiEndpoints<AppUser>()
   .AddEntityFrameworkStores<StoreContext>();
 
 var app = builder.Build();
+
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()

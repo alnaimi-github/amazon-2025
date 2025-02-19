@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using API.DTOs;
 using API.Extentions;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +15,7 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
           FirstName = registerDto.FirstName,
           LastName = registerDto.LastName,
           Email = registerDto.Email,
+          UserName = registerDto.Email
         };
      var result = await signInManager.UserManager.CreateAsync(user,registerDto.Password);
      if(!result.Succeeded)
