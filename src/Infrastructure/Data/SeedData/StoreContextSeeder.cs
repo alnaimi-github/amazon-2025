@@ -1,63 +1,73 @@
-namespace Infrastructure.Data.SeedData;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-public static class StoreContextSeeder
+namespace Infrastructure.Data.SeedData
 {
-    public static async Task SeedAsync(StoreContext storeContext, ILogger logger)
+    public static class StoreContextSeeder
     {
-        if (storeContext == null)
-            throw new ArgumentNullException(nameof(storeContext));
-
-        await SeedEntitiesAsync<Product>(
-            storeContext,
-            storeContext.Products,
-            Path.Combine("../Infrastructure/Data/SeedData/products.json"),
-            logger).ConfigureAwait(false);
-
-        await SeedEntitiesAsync<DeliveryMethod>(
-            storeContext,
-            storeContext.DeliveryMethods,
-            Path.Combine("../Infrastructure/Data/SeedData/delivery.json"),
-            logger).ConfigureAwait(false);
-    }
-
-    private static async Task SeedEntitiesAsync<TEntity>(
-        StoreContext context,
-        DbSet<TEntity> dbSet,
-        string relativePath,
-        ILogger logger) where TEntity : class
-    {
-        try
+        public static async Task SeedAsync(StoreContext storeContext, ILogger logger)
         {
-            if (await dbSet.AnyAsync().ConfigureAwait(false))
-            {
-                logger.LogInformation($"Database already contains {typeof(TEntity).Name} data. Skipping seeding.");
-                return;
-            }
+            if (storeContext == null)
+                throw new ArgumentNullException(nameof(storeContext));
 
-            var fullPath = Path.Combine(relativePath);
+            await SeedEntitiesAsync<Product>(
+                storeContext,
+                storeContext.Products,
+                Path.Combine("Data", "SeedData", "products.json"),
+                logger).ConfigureAwait(false);
 
-            if (!File.Exists(fullPath))
-            {
-                logger.LogError($"Seed file not found: {fullPath}");
-                return;
-            }
-
-            var entities = JsonSerializer.Deserialize<List<TEntity>>(
-                await File.ReadAllTextAsync(fullPath).ConfigureAwait(false),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            if (entities == null)
-            {
-                logger.LogError($"Seed file is empty: {fullPath}");
-                return;
-            }
-
-            await dbSet.AddRangeAsync(entities).ConfigureAwait(false);
-        
+            await SeedEntitiesAsync<DeliveryMethod>(
+                storeContext,
+                storeContext.DeliveryMethods,
+                Path.Combine("Data", "SeedData", "delivery.json"),
+                logger).ConfigureAwait(false);
         }
-        catch (Exception ex)
+
+        private static async Task SeedEntitiesAsync<TEntity>(
+            StoreContext context,
+            DbSet<TEntity> dbSet,
+            string relativePath,
+            ILogger logger) where TEntity : class
         {
-            logger.LogError(ex, $"An error occurred while seeding {typeof(TEntity).Name} data.");
+            try
+            {
+                if (await dbSet.AnyAsync().ConfigureAwait(false))
+                {
+                    logger.LogInformation($"Database already contains {typeof(TEntity).Name} data. Skipping seeding.");
+                    return;
+                }
+
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var fullPath = Path.Combine(basePath, relativePath);
+
+                if (!File.Exists(fullPath))
+                {
+                    logger.LogError($"Seed file not found: {fullPath}");
+                    return;
+                }
+
+                var entities = JsonSerializer.Deserialize<List<TEntity>>(
+                    await File.ReadAllTextAsync(fullPath).ConfigureAwait(false),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (entities == null)
+                {
+                    logger.LogError($"Seed file is empty: {fullPath}");
+                    return;
+                }
+
+                await dbSet.AddRangeAsync(entities).ConfigureAwait(false);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"An error occurred while seeding {typeof(TEntity).Name} data.");
+            }
         }
     }
 }

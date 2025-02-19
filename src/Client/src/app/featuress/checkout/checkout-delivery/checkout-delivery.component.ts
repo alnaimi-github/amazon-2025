@@ -1,9 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { MatRadioModule } from '@angular/material/radio';
 import { CheckoutService } from '../../../core/services/checkout.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-checkout-delivery',
-  imports: [],
+  imports: [
+    MatRadioModule,
+    CurrencyPipe
+  ],
   templateUrl: './checkout-delivery.component.html',
   styleUrl: './checkout-delivery.component.scss'
 })
