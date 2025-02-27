@@ -110,7 +110,7 @@ removeItemFromCart(productId: number,quantity = 1){
   }
 }
 
-private deleteCart(){
+ deleteCart(){
    this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id).subscribe({
     next: () => {
       localStorage.removeItem("cart_id");
