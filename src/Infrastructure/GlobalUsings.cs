@@ -11,3 +11,5 @@ global using Infrastructure.Services;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Infrastructure.Data.Specifications;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Core.Entities.OrderAggregate;

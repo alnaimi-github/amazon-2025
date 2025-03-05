@@ -1,6 +1,6 @@
 namespace API.Controllers;
 
-public class ProductsController(IGenericRepository<Product> repository) : BaseApiController
+public class ProductsController(IUnitOfWork unit) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> GetProductsAsync([FromQuery] ProductSpecPramas specPramas, 
@@ -8,7 +8,7 @@ public class ProductsController(IGenericRepository<Product> repository) : BaseAp
     {
         var spec = new ProductSpecification(specPramas);
         return await CreatePagedResponseAsync(
-            repository,
+            unit.Repository<Product>(),
             spec, 
             specPramas.PageIndex,
             specPramas.PageSize,
@@ -19,7 +19,7 @@ public class ProductsController(IGenericRepository<Product> repository) : BaseAp
     public async Task<IActionResult> GetProductAsync(int id,
      CancellationToken cancellationToken)
     {
-        var product = await repository.GetByIdAsync(id, cancellationToken);
+        var product = await  unit.Repository<Product>().GetByIdAsync(id, cancellationToken);
         if (product == null)
         {
             return NotFound(new { Message = $"Product with ID {id} not found." });
@@ -36,9 +36,9 @@ public async Task<IActionResult> CreateProductAsync(Product product, Cancellatio
         return BadRequest(new { Message = "Product data is invalid." });
     }
 
-    await repository.AddAsync(product, cancellationToken);
+    await  unit.Repository<Product>().AddAsync(product, cancellationToken);
 
-    if (await repository.SaveChangesAsync(cancellationToken))
+    if (await unit.Compolete())
     {
         return Ok(product);
     }
@@ -56,14 +56,14 @@ public async Task<IActionResult> CreateProductAsync(Product product, Cancellatio
             return BadRequest(new { Message = "Product ID mismatch." });
         }
 
-        if (!await repository.EntityExists(id, cancellationToken))
+        if (!await  unit.Repository<Product>().EntityExists(id, cancellationToken))
         {
             return NotFound(new { Message = $"Product with ID {id} not found." });
         }
 
-       await  repository.UpdateAsync(product, cancellationToken);
+       await   unit.Repository<Product>().UpdateAsync(product, cancellationToken);
 
-        if (!await repository.SaveChangesAsync(cancellationToken))
+        if (!await unit.Compolete())
         {
             return StatusCode(500, new { Message = "An error occurred while saving the product." });
         }
@@ -75,14 +75,14 @@ public async Task<IActionResult> CreateProductAsync(Product product, Cancellatio
     public async Task<IActionResult> DeleteProductAsync(int id, 
     CancellationToken cancellationToken)
     {
-        var product = await repository.GetByIdAsync(id, cancellationToken);
+        var product = await  unit.Repository<Product>().GetByIdAsync(id, cancellationToken);
         if (product == null)
         {
             return NotFound(new { Message = $"Product with ID {id} not found." });
         }
 
-        await repository.DeleteAsync(product, cancellationToken);
-        if (!await repository.SaveChangesAsync(cancellationToken))
+        await  unit.Repository<Product>().DeleteAsync(product, cancellationToken);
+        if (!await unit.Compolete())
         {
             return StatusCode(500, new { Message = "An error occurred while deleting the product." });
         }
@@ -94,7 +94,7 @@ public async Task<IActionResult> CreateProductAsync(Product product, Cancellatio
     public async Task<IActionResult> GetBrandsAsync(CancellationToken cancellationToken)
     {
        var spec = new BrandListSpecification();
-        var brands = await repository.ListSpecAsync(spec,cancellationToken);
+        var brands = await  unit.Repository<Product>().ListSpecAsync(spec, cancellationToken);
         return Ok(brands);
     }
 
@@ -102,7 +102,7 @@ public async Task<IActionResult> CreateProductAsync(Product product, Cancellatio
     public async Task<IActionResult> GetTypesAsync(CancellationToken cancellationToken)
     {
         var spec = new TypeListSpecification();
-        var types = await repository.ListSpecAsync(spec,cancellationToken);
+        var types = await  unit.Repository<Product>().ListSpecAsync(spec, cancellationToken);
         return Ok(types);
     }
 }

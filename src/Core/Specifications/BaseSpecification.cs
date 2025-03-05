@@ -1,3 +1,4 @@
+
 namespace Core.Specifications;
 
 public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecification<T>
@@ -16,11 +17,25 @@ public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecif
 
     public bool IsPagingEnabled { get; private set; }
 
+    public List<Expression<Func<T, object>>> Includes { get; } = [];
+
+    public List<string> IncludeStrings { get; } = [];
+
+    protected void AddInclude(Expression<Func<T, object>> includeExpression)
+    {
+        Includes.Add(includeExpression);
+    }
+
+    protected void AddInclude(string includeString)
+    {
+        IncludeStrings.Add(includeString); // For ThenInclude
+    }
+
     public IQueryable<T> ApplyCriteria(IQueryable<T> query)
     {
-        if(Criteria is not null)
+        if (Criteria is not null)
         {
-          query.Where(Criteria);
+            query.Where(Criteria);
         }
         return query;
     }
@@ -34,7 +49,8 @@ public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecif
         OrderByDescending = orderByDescExpression;
     }
 
-    protected void ApplyDistinct(){
+    protected void ApplyDistinct()
+    {
         IsDistinct = true;
     }
 

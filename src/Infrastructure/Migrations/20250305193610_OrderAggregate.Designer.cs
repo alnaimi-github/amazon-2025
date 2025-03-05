@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using infrastructure.Data;
 
@@ -11,9 +12,11 @@ using infrastructure.Data;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20250305193610_OrderAggregate")]
+    partial class OrderAggregate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,10 +430,10 @@ namespace Infrastructure.Migrations
                             b1.Property<int>("ExpMonth")
                                 .HasColumnType("int");
 
-                            b1.Property<int>("ExpYear")
+                            b1.Property<int>("Last4")
                                 .HasColumnType("int");
 
-                            b1.Property<int>("Last4")
+                            b1.Property<int>("Year")
                                 .HasColumnType("int");
 
                             b1.HasKey("OrderId");

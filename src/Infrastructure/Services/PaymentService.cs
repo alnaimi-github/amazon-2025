@@ -1,25 +1,15 @@
 using Stripe;
-using Microsoft.Extensions.Configuration;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Infrastructure.Services;
-using Core.Entities;
-using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services
 {
     public class PaymentService(
         IConfiguration config,
         ICartService cartService,
-        IGenericRepository<Core.Entities.Product> productRepo,
-        IGenericRepository<DeliveryMethod> dmRepo,
+        IUnitOfWork unit,
         ILogger<PaymentService> logger) : IPaymentService
     {
         private readonly IConfiguration _config = config;
         private readonly ICartService _cartService = cartService;
-        private readonly IGenericRepository<Core.Entities.Product> _productRepo = productRepo;
-        private readonly IGenericRepository<DeliveryMethod> _dmRepo = dmRepo;
         private readonly ILogger<PaymentService> _logger = logger;
 
         public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId, CancellationToken cancellationToken)
@@ -33,7 +23,7 @@ namespace Infrastructure.Services
 
             if (cart.DeliveryMethodId.HasValue)
             {
-                var deliveryMethod = await _dmRepo.GetByIdAsync((int)cart.DeliveryMethodId, cancellationToken);
+                var deliveryMethod = await unit.Repository<DeliveryMethod>().GetByIdAsync((int)cart.DeliveryMethodId, cancellationToken);
                 if (deliveryMethod is null) return null;
 
                 shippingPrice = deliveryMethod.Price;
@@ -41,7 +31,7 @@ namespace Infrastructure.Services
 
             foreach (var item in cart.Items)
             {
-                var productItem = await _productRepo.GetByIdAsync(item.ProductId, cancellationToken);
+                var productItem = await unit.Repository<Core.Entities.Product>().GetByIdAsync(item.ProductId, cancellationToken);
                 if (productItem is null) return null;
 
                 if (productItem.Price != item.Price)

@@ -4,10 +4,10 @@ namespace API.Controllers;
 
 public class PaymentsController(
  IPaymentService paymentService,
- IGenericRepository<DeliveryMethod> dmRepo) 
+ IUnitOfWork unit) 
  : BaseApiController
 {
-   [Authorize] 
+  [Authorize] 
   [HttpPost("{cartId}")]
   public async Task<IActionResult> CreateOrUpdatePayementIntentAsync(string cartid, 
   CancellationToken cancellationToken)
@@ -21,6 +21,6 @@ public class PaymentsController(
   [HttpGet("delivery-methods")]
   public async Task<IActionResult> GetDeliveryMethodsAsync(CancellationToken cancellationToken) 
   {
-   return Ok(await dmRepo.ListAllAsync(cancellationToken));
+   return Ok(await  unit.Repository<DeliveryMethod>().ListAllAsync(cancellationToken));
   }
 }
