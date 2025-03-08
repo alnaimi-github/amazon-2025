@@ -1,5 +1,8 @@
+using API.Extentions;
+using API.SignalR;
 using Core.Entities.OrderAggregate;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Stripe;
 
 namespace API.Controllers;
@@ -7,11 +10,13 @@ namespace API.Controllers;
 public class PaymentsController(
  IPaymentService paymentService,
  IUnitOfWork unit,
+ IConfiguration config,
+ IHubContext<NotificationHub> hubContext,
  ILogger<PaymentsController> logger)
  : BaseApiController
 {
 
-  private readonly string _whSecret = "";
+  private readonly string _whSecret = config["StripeSettings:WhSecret"]!;
 
   [Authorize]
   [HttpPost("{cartId}")]
@@ -65,8 +70,8 @@ public class PaymentsController(
     if (intent.Status == "succeeded")
     {
       var spec = new OrderSpecification(intent.Id, true);
-      var order = await unit.Repository<Core.Entities.OrderAggregate.Order>().GetEntityWithSpecificationAsync(spec, default) ??
-      throw new Exception("Order not found!");
+      var order = await unit.Repository<Core.Entities.OrderAggregate.Order>().GetEntityWithSpecificationAsync(spec,CancellationToken.None) ??
+      throw new Exception($"Order not found!{intent.Id}");
 
       if ((long)order.GetTotal() * 100 != intent.Amount)
       {
@@ -78,6 +83,13 @@ public class PaymentsController(
       }
 
       await unit.Compolete();
+
+      var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
+      if (!string.IsNullOrEmpty(connectionId))
+      {
+        await hubContext.Clients.Client(connectionId)
+        .SendAsync("OrderCompleteNotification", order.ToDto());
+      }
     }
   }
 

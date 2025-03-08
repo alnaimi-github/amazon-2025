@@ -1,3 +1,5 @@
+using API.SignalR;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -19,6 +21,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
   .AddEntityFrameworkStores<StoreContext>();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 
@@ -26,8 +30,11 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 .WithOrigins("https://localhost:4200"));
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>();
+app.MapHub<NotificationHub>("/hub/notifications");
 
 await ApplyMigrationsAndSeedDatabaseAsync(app);
 
