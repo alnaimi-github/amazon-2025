@@ -66,6 +66,7 @@ namespace Infrastructure.Services
                 }
 
                 await _cartService.SetCartAsync(cart);
+
             }
             catch (StripeException ex)
             {

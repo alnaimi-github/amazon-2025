@@ -65,33 +65,64 @@ public class PaymentsController(
     }
   }
 
-  private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
-  {
+private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
+{
     if (intent.Status == "succeeded")
     {
-      var spec = new OrderSpecification(intent.Id, true);
-      var order = await unit.Repository<Core.Entities.OrderAggregate.Order>().GetEntityWithSpecificationAsync(spec,CancellationToken.None) ??
-      throw new Exception($"Order not found!{intent.Id}");
+        Core.Entities.OrderAggregate.Order order = null;
+        int maxRetries = 5;
+        int retryDelayMs = 1000;
 
-      if ((long)order.GetTotal() * 100 != intent.Amount)
-      {
-        order.Status = OrderStatus.PaymentMismatch;
-      }
-      else
-      {
-        order.Status = OrderStatus.PaymentReceived;
-      }
+        for (int i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                var spec = new OrderSpecification(intent.Id,true);
+                order = await unit.Repository<Core.Entities.OrderAggregate.Order>().GetEntityWithSpecificationAsync(spec,default);
 
-      await unit.Compolete();
+                if (order != null)
+                    break;
 
-      var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
-      if (!string.IsNullOrEmpty(connectionId))
-      {
-        await hubContext.Clients.Client(connectionId)
-        .SendAsync("OrderCompleteNotification", order.ToDto());
-      }
+                logger.LogWarning($"Order not found. Retry attempt {i + 1}/{maxRetries}");
+                await Task.Delay(retryDelayMs);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error fetching order during retry {i + 1}");
+            }
+        }
+
+        if (order == null)
+        {
+            logger.LogError($"Order not found after {maxRetries} attempts. PaymentIntent: {intent.Id}");
+            throw new Exception($"Order not found for PaymentIntent: {intent.Id}");
+        }
+
+        var orderTotal = (long)(order.GetTotal() * 100);
+        if (orderTotal != intent.Amount)
+        {
+            order.Status = OrderStatus.PaymentMismatch;
+            logger.LogWarning($"Amount mismatch. Order: {orderTotal}, Stripe: {intent.Amount}");
+        }
+        else
+        {
+            order.Status = OrderStatus.PaymentReceived;
+            logger.LogInformation($"Payment received for order {order.Id}");
+        }
+
+      
+        await unit.Compolete();
+
+      
+        var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
+        if (!string.IsNullOrEmpty(connectionId))
+        {
+            await hubContext.Clients.Client(connectionId)
+                .SendAsync("OrderCompleteNotification", order.ToDto());
+            logger.LogInformation($"Notification sent to {order.BuyerEmail}");
+        }
     }
-  }
+}
 
 
 
